@@ -1,0 +1,33 @@
+stages: 
+  - build
+  - deploy
+
+
+Build DIST:
+  stage: build
+  image: node:latest
+  script:
+    - npm ci
+    - npm run typescript
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 10min
+  when: manual
+  allow_failure: false
+
+Create Multi-OS Release:
+  stage: deploy
+  image: node:latest
+  dependencies:
+    - Build DIST
+  script:
+    - npm ci 
+    - npm run pkg
+  artifacts:
+    paths:
+      - "@oliverkarger"
+  only:
+    - master
+    - production
+    - "*-production"

@@ -1,10 +1,11 @@
 import { prompt } from "enquirer";
 const validateIP = require("validate-ip-node");
 const ping = require("ping");
+const { exec } = require("child_process");
 import { WriteInfo, WriteWarning, WriteSuccess, WriteRequest, Header } from "./ArtemisCLI";
 
 // * Get IP Addresses from User
-async function GetIPAddresses() {
+async function GetIPAddresses(): Promise<any> {
     const response = await prompt({
         type: "input",
         name: "IpAddressList",
@@ -13,7 +14,7 @@ async function GetIPAddresses() {
     return response;
 }
 
-async function ValidateIPAddress(IpAddress: string): Promise<boolean> {
+async function ValidateIPAddress(IpAddress): Promise<boolean> {
     if (validateIP(IpAddress)) {
         return true;
     } else {
@@ -51,3 +52,5 @@ GetIPAddresses().then((result) => {
         });
     });
 });
+
+exec("pause");

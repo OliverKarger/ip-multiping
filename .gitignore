@@ -1,1 +1,4 @@
 node_modules/
+@oliverkarger/
+dist/
+.gitignore
