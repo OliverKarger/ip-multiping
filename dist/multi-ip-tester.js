@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var enquirer_1 = require("enquirer");
+var _a = require("enquirer"), Select = _a.Select, prompt = _a.prompt;
 var validateIP = require("validate-ip-node");
 var ping = require("ping");
 var exec = require("child_process").exec;
@@ -44,18 +44,47 @@ var ArtemisCLI_1 = require("./ArtemisCLI");
 // * Get IP Addresses from User
 function GetIPAddresses() {
     return __awaiter(this, void 0, void 0, function () {
-        var response;
+        var response, inputMethod;
+        var _this = this;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, enquirer_1.prompt({
-                        type: "input",
-                        name: "IpAddressList",
-                        message: "IP-Addresses",
-                    })];
-                case 1:
-                    response = _a.sent();
-                    return [2 /*return*/, response];
-            }
+            ArtemisCLI_1.WriteRequest("Please select your preferred Way to input Data");
+            response = { IpAddressList: [] };
+            inputMethod = new Select({
+                name: "Action",
+                message: "Your Option:",
+                choices: ["File", "Params/Args", "CLI"],
+            });
+            inputMethod.run().then(function (answer) { return __awaiter(_this, void 0, void 0, function () {
+                var args;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (!(answer === "File")) return [3 /*break*/, 1];
+                            return [3 /*break*/, 4];
+                        case 1:
+                            if (!(answer === "Params/Args")) return [3 /*break*/, 2];
+                            args = process.argv.slice(2);
+                            ArtemisCLI_1.WriteInfo("ARGV: " + args);
+                            response.IpAddressList = args;
+                            return [3 /*break*/, 4];
+                        case 2:
+                            if (!(answer === "CLI")) return [3 /*break*/, 4];
+                            return [4 /*yield*/, prompt({ type: "input", name: "IpAddressList", message: "IP-Addresses" })];
+                        case 3:
+                            response = _a.sent();
+                            _a.label = 4;
+                        case 4: return [2 /*return*/];
+                    }
+                });
+            }); });
+            // ! Old Way
+            /*
+            const response = await prompt({
+                type: "input",
+                name: "IpAddressList",
+                message: "IP-Addresses",
+            });*/
+            return [2 /*return*/, response];
         });
     });
 }
@@ -73,10 +102,11 @@ function ValidateIPAddress(IpAddress) {
     });
 }
 ArtemisCLI_1.Header();
-ArtemisCLI_1.WriteRequest("Please Enter the IP-Addresses that you want to check on:");
 // Get IP Address to check from User
-GetIPAddresses().then(function (result) {
+GetIPAddresses()
+    .then(function (result) {
     var IpAddressList = result.IpAddressList.split(",");
+    console.log(IpAddressList);
     // Validate all of those IP Address for correct Format / SN
     IpAddressList.forEach(function (IpAddress) {
         ValidateIPAddress(IpAddress).then(function (IsValid) {
@@ -99,5 +129,8 @@ GetIPAddresses().then(function (result) {
             }
         });
     });
+})
+    .catch(function () {
+    ArtemisCLI_1.WriteError("Some Unkown Error occured. Please contact the Developer!");
 });
 exec("pause");
