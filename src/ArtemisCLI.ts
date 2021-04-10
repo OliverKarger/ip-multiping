@@ -1,5 +1,5 @@
 import chalk from "chalk";
-// import figures from "figures";
+import { circleQuestionMark } from "figures";
 import boxen from "boxen";
 import logSymbols from "log-symbols";
 
@@ -98,7 +98,7 @@ function WriteSuccess(msg: string) {
  */
 function WriteRequest(msg: string) {
     console.log(
-        logSymbols.success,
+        circleQuestionMark,
         chalk.magentaBright("[ REQUEST ]").padEnd(defaultMsgTypeWidth, defaultMsgTypePadChar),
         msg
     );
