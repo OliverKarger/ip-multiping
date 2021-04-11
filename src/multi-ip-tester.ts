@@ -15,6 +15,14 @@ type IpAddressListReturnType = {
 
 /**
  * @author Oliver Karger
+ * @description Contains Data return from cliPromptResult
+ */
+type IpAddressListPromiseReturnType = {
+    IpAddressList: string;
+};
+
+/**
+ * @author Oliver Karger
  * @description Get IP Addresses from User
  * @returns Object from Type: IpAddressListReturnType
  */
@@ -29,7 +37,7 @@ async function GetIpAddresses(): Promise<IpAddressListReturnType> {
         choices: ["File", "Params/Args", "CLI"],
     });
     // Display inputPrompt
-    inputPrompt.run().then(async (answer) => {
+    await inputPrompt.run().then(async (answer) => {
         switch (answer) {
             case "File":
                 break;
@@ -38,11 +46,14 @@ async function GetIpAddresses(): Promise<IpAddressListReturnType> {
                 response.IpAddressList = args;
                 break;
             case "CLI":
-                response = await prompt({
+                // ! Returns single string, has to be splitted
+                var cliPromptResult: IpAddressListPromiseReturnType = await prompt({
                     type: "input",
                     name: "IpAddressList",
                     message: "IP-Addresses",
-                });
+                }).then((cliPrompt) => cliPrompt);
+                // ! Split string for correct format
+                response.IpAddressList = cliPromptResult.IpAddressList.split(",");
                 break;
             default:
                 WriteError("Invalid inputPrompt Result!");
@@ -76,17 +87,23 @@ Header();
 function main(): void {
     // Get IP Addresses from User
     GetIpAddresses().then(async (result) => {
-        console.log(result);
         // Validate IP Addresses inputed by User and perform a single Ping
         result.IpAddressList.forEach(async (IpAddress) => {
             // Validate
             await ValidateIPAddress(IpAddress).then(async (isValid) => {
                 if (isValid) {
                     // IP Address is valid
-                    WriteInfo(`IP-Address: ${IpAddress} is ` + chalk.bgGreen.black + "valid!");
+                    WriteInfo(`IP-Address: ${IpAddress} is valid`);
+                    await ping.promise.probe(IpAddress).then(async (isAlive) => {
+                        if (isAlive) {
+                            WriteSuccess(`IP-Address: ${IpAddress} is alive!`);
+                        } else {
+                            WriteError(`IP-Address: ${IpAddress} is dead!`);
+                        }
+                    });
                 } else {
                     // IP Address is invalid
-                    WriteWarning(`IP-Address: ${IpAddress} is ` + chalk.bgRed.black + "invalid!");
+                    WriteWarning(`IP-Address: ${IpAddress} is invalid!`);
                 }
             });
         });

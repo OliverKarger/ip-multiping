@@ -22,8 +22,6 @@ const ArtemisCLI_AsciiLogo_Custom = `
 
   Submodule: ArtemisCLI/ServerUtils/Servertester.ts`;
 
-const defaultMsgTypeWidth: number = 23;
-const defaultMsgTypePadChar: string = " ";
 const lineBreak = "-------------------------------";
 
 /**
@@ -49,7 +47,7 @@ function Header() {
  * @param msg The Error Message to be displayed
  */
 function WriteError(msg: string) {
-    console.log(logSymbols.error, chalk.redBright("[ ERROR ]").padEnd(defaultMsgTypeWidth, defaultMsgTypePadChar), msg);
+    console.log(logSymbols.error, chalk.redBright.bold("[ ERR! ]"), msg);
 }
 
 /**
@@ -59,11 +57,7 @@ function WriteError(msg: string) {
  * @param msg The Warning Message to be displayed
  */
 function WriteWarning(msg: string) {
-    console.log(
-        logSymbols.warning,
-        chalk.yellowBright("[ WARNING ]").padEnd(defaultMsgTypeWidth, defaultMsgTypePadChar),
-        msg
-    );
+    console.log(logSymbols.warning, chalk.yellowBright.bold("[ WARN ]"), msg);
 }
 
 /**
@@ -73,7 +67,7 @@ function WriteWarning(msg: string) {
  * @param msg The Informational Message to be displayed
  */
 function WriteInfo(msg: string) {
-    console.log(logSymbols.info, chalk.cyanBright("[ INFO ]").padEnd(defaultMsgTypeWidth, defaultMsgTypePadChar), msg);
+    console.log(logSymbols.info, chalk.cyanBright.bold("[ INFO ]"), msg);
 }
 
 /**
@@ -83,11 +77,7 @@ function WriteInfo(msg: string) {
  * @param msg The Success Message to be displayed
  */
 function WriteSuccess(msg: string) {
-    console.log(
-        logSymbols.success,
-        chalk.greenBright("[ SUCCESS ]").padEnd(defaultMsgTypeWidth, defaultMsgTypePadChar),
-        msg
-    );
+    console.log(logSymbols.success, chalk.greenBright.bold("[ NICE ]"), msg);
 }
 
 /**
@@ -97,11 +87,7 @@ function WriteSuccess(msg: string) {
  * @param msg The Request Message to be displayed
  */
 function WriteRequest(msg: string) {
-    console.log(
-        circleQuestionMark,
-        chalk.magentaBright("[ REQUEST ]").padEnd(defaultMsgTypeWidth, defaultMsgTypePadChar),
-        msg
-    );
+    console.log(circleQuestionMark, chalk.magentaBright.bold("[ IREQ ]"), msg);
 }
 
 // export
