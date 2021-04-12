@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,102 +34,132 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var _a = require("enquirer"), Select = _a.Select, prompt = _a.prompt;
 var validateIP = require("validate-ip-node");
 var ping = require("ping");
 var exec = require("child_process").exec;
-var ArtemisCLI_1 = require("./ArtemisCLI");
-// * Get IP Addresses from User
-function GetIPAddresses() {
+var _b = require("./ArtemisCLI"), WriteInfo = _b.WriteInfo, WriteWarning = _b.WriteWarning, WriteSuccess = _b.WriteSuccess, WriteRequest = _b.WriteRequest, WriteError = _b.WriteError, Header = _b.Header;
+var chalk = require("chalk");
+var fs = require("fs");
+/**
+ * @author Oliver Karger
+ * @description Get IP Addresses from User
+ * @returns Object from Type: IpAddressList
+ */
+function GetIpAddresses() {
     return __awaiter(this, void 0, void 0, function () {
-        var response, inputMethod;
+        var response, inputPrompt, InputPromptResult, filePath, rawData, hostsData, e_1, args, cliPromptResult;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    WriteRequest("Please select your preferred Way to input Data");
+                    response = { AddressList: [] };
+                    inputPrompt = new Select({
+                        name: "Action",
+                        message: "Your way:",
+                        choices: ["File", "Params/Args", "CLI"],
+                    });
+                    return [4 /*yield*/, inputPrompt.run()];
+                case 1:
+                    InputPromptResult = _a.sent();
+                    if (!(InputPromptResult === "File")) return [3 /*break*/, 7];
+                    WriteInfo("Current Location: " + process.cwd());
+                    return [4 /*yield*/, prompt({
+                            type: "input",
+                            name: "File Path",
+                            message: "Please Enter Path to Host File (.json)",
+                        })];
+                case 2:
+                    filePath = _a.sent();
+                    _a.label = 3;
+                case 3:
+                    _a.trys.push([3, 5, , 6]);
+                    return [4 /*yield*/, fs.readFile(filePath)];
+                case 4:
+                    rawData = _a.sent();
+                    hostsData = JSON.parse(rawData);
+                    response = hostsData.AddressList;
+                    return [3 /*break*/, 6];
+                case 5:
+                    e_1 = _a.sent();
+                    WriteError(e_1);
+                    return [3 /*break*/, 6];
+                case 6: return [3 /*break*/, 11];
+                case 7:
+                    if (!(InputPromptResult === "Params/Args")) return [3 /*break*/, 8];
+                    args = process.argv.slice(2);
+                    response.AddressList = args;
+                    return [3 /*break*/, 11];
+                case 8:
+                    if (!(InputPromptResult === "CLI")) return [3 /*break*/, 10];
+                    return [4 /*yield*/, prompt({
+                            type: "input",
+                            name: "AddressList",
+                            message: "IP-Addresses",
+                        }).then(function (cliPrompt) { return cliPrompt; })];
+                case 9:
+                    cliPromptResult = _a.sent();
+                    // ! Split string for correct format
+                    response.AddressList = cliPromptResult.AddressList.split(",");
+                    return [3 /*break*/, 11];
+                case 10:
+                    WriteError("Invalid Prompt Result!");
+                    _a.label = 11;
+                case 11: return [2 /*return*/, response];
+            }
+        });
+    });
+}
+// Display ArtemisCLI Header
+Header();
+/**
+ * @author Oliver Karger
+ * @description Main Method
+ */
+function main() {
+    return __awaiter(this, void 0, void 0, function () {
+        var IpAddressInput;
         var _this = this;
         return __generator(this, function (_a) {
-            ArtemisCLI_1.WriteRequest("Please select your preferred Way to input Data");
-            response = { IpAddressList: [] };
-            inputMethod = new Select({
-                name: "Action",
-                message: "Your Option:",
-                choices: ["File", "Params/Args", "CLI"],
-            });
-            inputMethod.run().then(function (answer) { return __awaiter(_this, void 0, void 0, function () {
-                var args;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (!(answer === "File")) return [3 /*break*/, 1];
-                            return [3 /*break*/, 4];
-                        case 1:
-                            if (!(answer === "Params/Args")) return [3 /*break*/, 2];
-                            args = process.argv.slice(2);
-                            ArtemisCLI_1.WriteInfo("ARGV: " + args);
-                            response.IpAddressList = args;
-                            return [3 /*break*/, 4];
-                        case 2:
-                            if (!(answer === "CLI")) return [3 /*break*/, 4];
-                            return [4 /*yield*/, prompt({ type: "input", name: "IpAddressList", message: "IP-Addresses" })];
-                        case 3:
-                            response = _a.sent();
-                            _a.label = 4;
-                        case 4: return [2 /*return*/];
-                    }
-                });
-            }); });
-            // ! Old Way
-            /*
-            const response = await prompt({
-                type: "input",
-                name: "IpAddressList",
-                message: "IP-Addresses",
-            });*/
-            return [2 /*return*/, response];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, GetIpAddresses()];
+                case 1:
+                    IpAddressInput = _a.sent();
+                    return [4 /*yield*/, Promise.all(IpAddressInput.AddressList.map(function (IpAddress) { return __awaiter(_this, void 0, void 0, function () {
+                            var status;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, validateIP(IpAddress)];
+                                    case 1:
+                                        if (!_a.sent()) return [3 /*break*/, 3];
+                                        // IP Address is valid
+                                        WriteInfo("IP-Address: " + IpAddress + " is valid");
+                                        return [4 /*yield*/, ping.promise.probe(IpAddress)];
+                                    case 2:
+                                        status = _a.sent();
+                                        if (status.alive) {
+                                            WriteSuccess("IP-Address: " + IpAddress + " is alive!");
+                                        }
+                                        else {
+                                            WriteWarning("IP-Address: " + IpAddress + " is dead!");
+                                        }
+                                        return [3 /*break*/, 4];
+                                    case 3:
+                                        // IP Address is invalid
+                                        WriteWarning("IP-Address: " + IpAddress + " is invalid!");
+                                        _a.label = 4;
+                                    case 4: return [2 /*return*/];
+                                }
+                            });
+                        }); }))];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }
-function ValidateIPAddress(IpAddress) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            if (validateIP(IpAddress)) {
-                return [2 /*return*/, true];
-            }
-            else {
-                return [2 /*return*/, false];
-            }
-            return [2 /*return*/];
-        });
-    });
-}
-ArtemisCLI_1.Header();
-// Get IP Address to check from User
-GetIPAddresses()
-    .then(function (result) {
-    var IpAddressList = result.IpAddressList.split(",");
-    console.log(IpAddressList);
-    // Validate all of those IP Address for correct Format / SN
-    IpAddressList.forEach(function (IpAddress) {
-        ValidateIPAddress(IpAddress).then(function (IsValid) {
-            if (IsValid) {
-                // IP Address is valid
-                ArtemisCLI_1.WriteInfo("IP-Address: " + IpAddress + " valid!");
-                // Ping IP Address
-                ping.promise.probe(IpAddress).then(function (IsReachable) {
-                    if (IsReachable) {
-                        ArtemisCLI_1.WriteSuccess("IP-Address: " + IpAddress + " is reachable!");
-                    }
-                    else {
-                        ArtemisCLI_1.WriteWarning("IP-Address: " + IpAddress + " is not reachable!");
-                    }
-                });
-            }
-            else {
-                // IP Address is invalid
-                ArtemisCLI_1.WriteWarning("IP: " + IpAddress + " invalid!");
-            }
-        });
-    });
-})
-    .catch(function () {
-    ArtemisCLI_1.WriteError("Some Unkown Error occured. Please contact the Developer!");
-});
+// * Call Main Method - has to be on the bottom of the code
+main().catch(function (e) { return WriteError(e); });
+// * Keep Console open
 exec("pause");

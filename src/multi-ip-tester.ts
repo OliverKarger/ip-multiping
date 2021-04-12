@@ -4,6 +4,7 @@ var ping = require("ping");
 var { exec } = require("child_process");
 var { WriteInfo, WriteWarning, WriteSuccess, WriteRequest, WriteError, Header } = require("./ArtemisCLI");
 var chalk = require("chalk");
+var fs = require("fs");
 
 /**
  * @author Oliver Karger
@@ -15,7 +16,7 @@ type IpAddressList = {
 
 /**
  * @author Oliver Karger
- * @description Contains Data return from cliPromptResult
+ * @description AddressList by prompt(...); as String, needs to be .split(",") to convert to IpAddressList
  */
 type IpAddressListString = {
     AddressList: string;
@@ -24,7 +25,7 @@ type IpAddressListString = {
 /**
  * @author Oliver Karger
  * @description Get IP Addresses from User
- * @returns Object from Type: IpAddressListReturnType
+ * @returns Object from Type: IpAddressList
  */
 async function GetIpAddresses(): Promise<IpAddressList> {
     WriteRequest("Please select your preferred Way to input Data");
@@ -36,67 +37,37 @@ async function GetIpAddresses(): Promise<IpAddressList> {
         message: "Your way:",
         choices: ["File", "Params/Args", "CLI"],
     });
-    // Display inputPrompt
-    var inputPromptResult = await inputPrompt.run();
-    switch (inputPromptResult) {
-        case "File":
-            break;
-        case "Params/Args":
-            var args: string[] = process.argv.slice(2);
-            response.AddressList = args;
-            break;
-        case "CLI":
-            // ! Returns single string, has to be splitted
-            var cliPromptResult: IpAddressListString = await prompt({
-                type: "input",
-                name: "AddressList",
-                message: "IP-Addresses",
-            }).then((cliPrompt) => cliPrompt);
-            // ! Split string for correct format
-            response.AddressList = cliPromptResult.AddressList.split(",");
-            break;
-        default:
-            WriteError("Invalid inputPrompt Result!");
-            break;
-    }
-    /*     await inputPrompt.run().then(async (answer) => {
-        switch (answer) {
-            case "File":
-                break;
-            case "Params/Args":
-                var args: string[] = process.argv.slice(2);
-                response.AddressList = args;
-                break;
-            case "CLI":
-                // ! Returns single string, has to be splitted
-                var cliPromptResult: IpAddressListString = await prompt({
-                    type: "input",
-                    name: "AddressList",
-                    message: "IP-Addresses",
-                }).then((cliPrompt) => cliPrompt);
-                // ! Split string for correct format
-                response.AddressList = cliPromptResult.AddressList.split(",");
-                break;
-            default:
-                WriteError("Invalid inputPrompt Result!");
-                break;
+    let InputPromptResult = await inputPrompt.run();
+    if (InputPromptResult === "File") {
+        WriteInfo("Current Location: " + process.cwd());
+        let filePath = await prompt({
+            type: "input",
+            name: "File Path",
+            message: "Please Enter Path to Host File (.json)",
+        });
+        try {
+            let rawData = await fs.readFile(filePath);
+            let hostsData = JSON.parse(rawData);
+            response = hostsData.AddressList;
+        } catch (e) {
+            WriteError(e);
         }
-    }); */
-    return response;
-}
-
-/**
- * @author Oliver Karger
- * @description Validate IPv4 Address
- * @param IpAddress IPv4 Address to be validated
- * @returns True if IPv4 Address is valid, false if not
- */
-async function ValidateIPAddress(IpAddress: string): Promise<boolean> {
-    if (validateIP(IpAddress)) {
-        return true;
+    } else if (InputPromptResult === "Params/Args") {
+        var args: string[] = process.argv.slice(2);
+        response.AddressList = args;
+    } else if (InputPromptResult === "CLI") {
+        // ! Returns single string, has to be splitted
+        var cliPromptResult: IpAddressListString = await prompt({
+            type: "input",
+            name: "AddressList",
+            message: "IP-Addresses",
+        }).then((cliPrompt) => cliPrompt);
+        // ! Split string for correct format
+        response.AddressList = cliPromptResult.AddressList.split(",");
     } else {
-        return false;
+        WriteError("Invalid Prompt Result!");
     }
+    return response;
 }
 
 // Display ArtemisCLI Header
@@ -108,60 +79,29 @@ Header();
  */
 async function main(): Promise<void> {
     // Get IP Addresses from User
-    let IPInput = await GetIpAddresses();
-    IPInput.AddressList.forEach(async (IpAddress) => {
-        // Validate
-        let ipIsValid = await ValidateIPAddress(IpAddress);
-        if (ipIsValid) {
-            // IP Address is valid
-            WriteInfo(`IP-Address: ${IpAddress} is valid`);
-            await ping.promise
-                .probe(IpAddress)
-                .then(async (pingResult) => {
-                    if (pingResult.alive) {
-                        WriteSuccess(`IP-Address: ${IpAddress} is alive!`);
-                    } else {
-                        WriteWarning(`IP-Address: ${IpAddress} is dead!`);
-                    }
-                })
-                .catch(() => {
-                    WriteError(`IP-Address: ${IpAddress} is dead!`);
-                });
-        } else {
-            // IP Address is invalid
-            WriteWarning(`IP-Address: ${IpAddress} is invalid!`);
-        }
-    });
-    /* GetIpAddresses().then(async (result) => {
-        // Validate IP Addresses inputed by User and perform a single Ping
-        result.AddressList.forEach(async (IpAddress) => {
+    var IpAddressInput = await GetIpAddresses();
+    await Promise.all(
+        IpAddressInput.AddressList.map(async (IpAddress) => {
             // Validate
-            let ipIsValid = await ValidateIPAddress(IpAddress);
-            if (ipIsValid) {
+            if (await validateIP(IpAddress)) {
                 // IP Address is valid
                 WriteInfo(`IP-Address: ${IpAddress} is valid`);
-                await ping.promise
-                    .probe(IpAddress)
-                    .then(async (pingResult) => {
-                        if (pingResult.alive) {
-                            WriteSuccess(`IP-Address: ${IpAddress} is alive!`);
-                        } else {
-                            WriteWarning(`IP-Address: ${IpAddress} is dead!`);
-                        }
-                    })
-                    .catch(() => {
-                        WriteError(`IP-Address: ${IpAddress} is dead!`);
-                    });
+                let status = await ping.promise.probe(IpAddress);
+                if (status.alive) {
+                    WriteSuccess(`IP-Address: ${IpAddress} is alive!`);
+                } else {
+                    WriteWarning(`IP-Address: ${IpAddress} is dead!`);
+                }
             } else {
                 // IP Address is invalid
                 WriteWarning(`IP-Address: ${IpAddress} is invalid!`);
             }
-        });
-    }); */
+        })
+    );
 }
 
 // * Call Main Method - has to be on the bottom of the code
-main();
+main().catch((e) => WriteError(e));
 
 // * Keep Console open
 exec("pause");
