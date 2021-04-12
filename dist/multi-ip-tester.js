@@ -87,7 +87,7 @@ function GetIpAddresses() {
                 case 6: return [3 /*break*/, 11];
                 case 7:
                     if (!(InputPromptResult === "Params/Args")) return [3 /*break*/, 8];
-                    args = process.argv.slice(2);
+                    args = process.argv.slice(2)[0].split(",");
                     response.AddressList = args;
                     return [3 /*break*/, 11];
                 case 8:
@@ -96,7 +96,7 @@ function GetIpAddresses() {
                             type: "input",
                             name: "AddressList",
                             message: "IP-Addresses",
-                        }).then(function (cliPrompt) { return cliPrompt; })];
+                        })];
                 case 9:
                     cliPromptResult = _a.sent();
                     // ! Split string for correct format

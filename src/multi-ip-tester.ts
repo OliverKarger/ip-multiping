@@ -53,7 +53,8 @@ async function GetIpAddresses(): Promise<IpAddressList> {
             WriteError(e);
         }
     } else if (InputPromptResult === "Params/Args") {
-        var args: string[] = process.argv.slice(2);
+        // removes first 2 items (default nodejs args), formatts for correct format
+        var args: string[] = process.argv.slice(2)[0].split(",");
         response.AddressList = args;
     } else if (InputPromptResult === "CLI") {
         // ! Returns single string, has to be splitted
@@ -61,7 +62,7 @@ async function GetIpAddresses(): Promise<IpAddressList> {
             type: "input",
             name: "AddressList",
             message: "IP-Addresses",
-        }).then((cliPrompt) => cliPrompt);
+        });
         // ! Split string for correct format
         response.AddressList = cliPromptResult.AddressList.split(",");
     } else {
