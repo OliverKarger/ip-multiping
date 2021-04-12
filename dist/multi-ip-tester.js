@@ -168,4 +168,4 @@ function main() {
 // * Call Main Method - has to be on the bottom of the code
 main().catch(function (e) { return WriteError(e); });
 // * Keep Console open
-// exec("pause");
+exec("pause");

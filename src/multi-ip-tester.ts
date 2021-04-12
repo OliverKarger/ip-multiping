@@ -139,4 +139,4 @@ async function main(): Promise<void> {
 main().catch((e) => WriteError(e));
 
 // * Keep Console open
-// exec("pause");
+exec("pause");
