@@ -41,6 +41,14 @@ var exec = require("child_process").exec;
 var _b = require("./ArtemisCLI"), WriteInfo = _b.WriteInfo, WriteWarning = _b.WriteWarning, WriteSuccess = _b.WriteSuccess, WriteRequest = _b.WriteRequest, WriteError = _b.WriteError, Header = _b.Header;
 var chalk = require("chalk");
 var fs = require("fs");
+var marked = require("marked");
+var MarkdownRenderer = require("marked-terminal");
+var help = "\n--------\n- HELP -\n--------\n\n1. CLI\n -> Input IP-Addresses via Console\n\n2. Params/Args\n -> Input IP-Addresses via Args, comma seperated\n Example: ./<source-file> Address1,Address2,Address2\n\n3. File\n -> Load IP-Addresses from File\n Example: (hosts.json)\n    {\n        \"AddressList: [\n            \"10.0.0.1\",\n            \"192.168.1.1\",\n            \"172.16.0.1\",\n            \"8.8.8.8\",\n            \"8.8.4.4\",\n            \"1.1.1.1\"\n        ]\n    }\n";
+// setup marked-terminal-renderer
+marked.setOptions({
+    // Custom renderer
+    renderer: new MarkdownRenderer(),
+});
 /**
  * @author Oliver Karger
  * @description Get IP Addresses from User
@@ -48,7 +56,7 @@ var fs = require("fs");
  */
 function GetIpAddresses() {
     return __awaiter(this, void 0, void 0, function () {
-        var response, inputPrompt, InputPromptResult, filePath, rawData, hostsData, e_1, args, cliPromptResult;
+        var response, inputPrompt, InputPromptResult, filePath, cliPromptResult;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -57,55 +65,53 @@ function GetIpAddresses() {
                     inputPrompt = new Select({
                         name: "Action",
                         message: "Your way:",
-                        choices: ["File", "Params/Args", "CLI"],
+                        choices: ["CLI", "Params/Args", "File", "Help"],
                     });
                     return [4 /*yield*/, inputPrompt.run()];
                 case 1:
                     InputPromptResult = _a.sent();
-                    if (!(InputPromptResult === "File")) return [3 /*break*/, 7];
+                    if (!(InputPromptResult === "File")) return [3 /*break*/, 3];
                     WriteInfo("Current Location: " + process.cwd());
                     return [4 /*yield*/, prompt({
                             type: "input",
-                            name: "File Path",
+                            name: "path",
                             message: "Please Enter Path to Host File (.json)",
                         })];
                 case 2:
                     filePath = _a.sent();
-                    _a.label = 3;
+                    try {
+                        response = JSON.parse(fs.readFileSync(filePath.path));
+                    }
+                    catch (e) {
+                        WriteError(e);
+                    }
+                    return [3 /*break*/, 7];
                 case 3:
-                    _a.trys.push([3, 5, , 6]);
-                    return [4 /*yield*/, fs.readFile(filePath)];
+                    if (!(InputPromptResult === "Params/Args")) return [3 /*break*/, 4];
+                    // removes first 2 items (default nodejs args), formatts for correct format
+                    response.AddressList = process.argv.slice(2)[0].split(",");
+                    return [3 /*break*/, 7];
                 case 4:
-                    rawData = _a.sent();
-                    hostsData = JSON.parse(rawData);
-                    response = hostsData.AddressList;
-                    return [3 /*break*/, 6];
-                case 5:
-                    e_1 = _a.sent();
-                    WriteError(e_1);
-                    return [3 /*break*/, 6];
-                case 6: return [3 /*break*/, 11];
-                case 7:
-                    if (!(InputPromptResult === "Params/Args")) return [3 /*break*/, 8];
-                    args = process.argv.slice(2)[0].split(",");
-                    response.AddressList = args;
-                    return [3 /*break*/, 11];
-                case 8:
-                    if (!(InputPromptResult === "CLI")) return [3 /*break*/, 10];
+                    if (!(InputPromptResult === "CLI")) return [3 /*break*/, 6];
                     return [4 /*yield*/, prompt({
                             type: "input",
                             name: "AddressList",
                             message: "IP-Addresses",
                         })];
-                case 9:
+                case 5:
                     cliPromptResult = _a.sent();
                     // ! Split string for correct format
                     response.AddressList = cliPromptResult.AddressList.split(",");
-                    return [3 /*break*/, 11];
-                case 10:
-                    WriteError("Invalid Prompt Result!");
-                    _a.label = 11;
-                case 11: return [2 /*return*/, response];
+                    return [3 /*break*/, 7];
+                case 6:
+                    if (InputPromptResult === "Help") {
+                        WriteInfo("\n" + help);
+                    }
+                    else {
+                        WriteError("Invalid Prompt Result!");
+                    }
+                    _a.label = 7;
+                case 7: return [2 /*return*/, response];
             }
         });
     });
@@ -162,4 +168,4 @@ function main() {
 // * Call Main Method - has to be on the bottom of the code
 main().catch(function (e) { return WriteError(e); });
 // * Keep Console open
-exec("pause");
+// exec("pause");

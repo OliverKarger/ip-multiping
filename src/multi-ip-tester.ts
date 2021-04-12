@@ -5,6 +5,41 @@ var { exec } = require("child_process");
 var { WriteInfo, WriteWarning, WriteSuccess, WriteRequest, WriteError, Header } = require("./ArtemisCLI");
 var chalk = require("chalk");
 var fs = require("fs");
+var marked = require("marked");
+var MarkdownRenderer = require("marked-terminal");
+
+const help = `
+--------
+- HELP -
+--------
+
+1. CLI
+ -> Input IP-Addresses via Console
+
+2. Params/Args
+ -> Input IP-Addresses via Args, comma seperated
+ Example: ./<source-file> Address1,Address2,Address2
+
+3. File
+ -> Load IP-Addresses from File
+ Example: (hosts.json)
+    {
+        "AddressList: [
+            "10.0.0.1",
+            "192.168.1.1",
+            "172.16.0.1",
+            "8.8.8.8",
+            "8.8.4.4",
+            "1.1.1.1"
+        ]
+    }
+`;
+
+// setup marked-terminal-renderer
+marked.setOptions({
+    // Custom renderer
+    renderer: new MarkdownRenderer(),
+});
 
 /**
  * @author Oliver Karger
@@ -35,7 +70,7 @@ async function GetIpAddresses(): Promise<IpAddressList> {
     var inputPrompt = new Select({
         name: "Action",
         message: "Your way:",
-        choices: ["File", "Params/Args", "CLI"],
+        choices: ["CLI", "Params/Args", "File", "Help"],
     });
     let InputPromptResult = await inputPrompt.run();
     if (InputPromptResult === "File") {
@@ -46,9 +81,7 @@ async function GetIpAddresses(): Promise<IpAddressList> {
             message: "Please Enter Path to Host File (.json)",
         });
         try {
-            let rawData = fs.readFileSync(filePath.path);
-            let hostsData = JSON.parse(rawData);
-            response = hostsData;
+            response = JSON.parse(fs.readFileSync(filePath.path));
         } catch (e) {
             WriteError(e);
         }
@@ -64,6 +97,8 @@ async function GetIpAddresses(): Promise<IpAddressList> {
         });
         // ! Split string for correct format
         response.AddressList = cliPromptResult.AddressList.split(",");
+    } else if (InputPromptResult === "Help") {
+        WriteInfo("\n" + help);
     } else {
         WriteError("Invalid Prompt Result!");
     }
@@ -80,7 +115,6 @@ Header();
 async function main(): Promise<void> {
     // Get IP Addresses from User
     var IpAddressInput = await GetIpAddresses();
-    console.log(IpAddressInput);
     await Promise.all(
         IpAddressInput.AddressList.map(async (IpAddress) => {
             // Validate
@@ -105,4 +139,4 @@ async function main(): Promise<void> {
 main().catch((e) => WriteError(e));
 
 // * Keep Console open
-exec("pause");
+// exec("pause");
