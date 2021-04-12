@@ -42,20 +42,19 @@ async function GetIpAddresses(): Promise<IpAddressList> {
         WriteInfo("Current Location: " + process.cwd());
         let filePath = await prompt({
             type: "input",
-            name: "File Path",
+            name: "path",
             message: "Please Enter Path to Host File (.json)",
         });
         try {
-            let rawData = await fs.readFile(filePath);
+            let rawData = fs.readFileSync(filePath.path);
             let hostsData = JSON.parse(rawData);
-            response = hostsData.AddressList;
+            response = hostsData;
         } catch (e) {
             WriteError(e);
         }
     } else if (InputPromptResult === "Params/Args") {
         // removes first 2 items (default nodejs args), formatts for correct format
-        var args: string[] = process.argv.slice(2)[0].split(",");
-        response.AddressList = args;
+        response.AddressList = process.argv.slice(2)[0].split(",");
     } else if (InputPromptResult === "CLI") {
         // ! Returns single string, has to be splitted
         var cliPromptResult: IpAddressListString = await prompt({
@@ -81,6 +80,7 @@ Header();
 async function main(): Promise<void> {
     // Get IP Addresses from User
     var IpAddressInput = await GetIpAddresses();
+    console.log(IpAddressInput);
     await Promise.all(
         IpAddressInput.AddressList.map(async (IpAddress) => {
             // Validate
