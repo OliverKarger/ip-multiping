@@ -90,22 +90,26 @@ function main(): void {
         // Validate IP Addresses inputed by User and perform a single Ping
         result.IpAddressList.forEach(async (IpAddress) => {
             // Validate
-            await ValidateIPAddress(IpAddress).then(async (isValid) => {
-                if (isValid) {
-                    // IP Address is valid
-                    WriteInfo(`IP-Address: ${IpAddress} is valid`);
-                    await ping.promise.probe(IpAddress).then(async (isAlive) => {
-                        if (isAlive) {
+            let ipIsValid = await ValidateIPAddress(IpAddress);
+            if (ipIsValid) {
+                // IP Address is valid
+                WriteInfo(`IP-Address: ${IpAddress} is valid`);
+                await ping.promise
+                    .probe(IpAddress)
+                    .then(async (isAlive) => {
+                        if (isAlive.alive) {
                             WriteSuccess(`IP-Address: ${IpAddress} is alive!`);
                         } else {
-                            WriteError(`IP-Address: ${IpAddress} is dead!`);
+                            WriteWarning(`IP-Address: ${IpAddress} is dead!`);
                         }
+                    })
+                    .catch(() => {
+                        WriteError(`IP-Address: ${IpAddress} is dead!`);
                     });
-                } else {
-                    // IP Address is invalid
-                    WriteWarning(`IP-Address: ${IpAddress} is invalid!`);
-                }
-            });
+            } else {
+                // IP Address is invalid
+                WriteWarning(`IP-Address: ${IpAddress} is invalid!`);
+            }
         });
     });
 }
