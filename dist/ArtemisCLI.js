@@ -9,8 +9,7 @@ var figures_1 = require("figures");
 var boxen_1 = __importDefault(require("boxen"));
 var log_symbols_1 = __importDefault(require("log-symbols"));
 // REUSED CONSTS
-var ArtemisCLI_AsciiLogo = "\n  ___       _                 _     _____  _     _____\n / _ \\     | |               (_)   /  __ \\| |   |_   _|\n/ /_\\ \\_ __| |_ ___ _ __ ___  _ ___| /  \\/| |     | |  \n|  _  | '__| __/ _ \\ '_ ` _ \\| / __| |    | |     | |  \n| | | | |  | ||  __/ | | | | | \\__ \\ \\__/\\| |_____| |_ \n\\_| |_/_|   \\__\\___|_| |_| |_|_|___/\\____/\\_____/\\___/ ";
-var ArtemisCLI_AsciiLogo_Custom = "\n  ___       _                 _     _____  _     _____\n / _ \\     | |               (_)   /  __ \\| |   |_   _|\n/ /_\\ \\_ __| |_ ___ _ __ ___  _ ___| /  \\/| |     | |  \n|  _  | '__| __/ _ \\ '_ ` _ \\| / __| |    | |     | |  \n| | | | |  | ||  __/ | | | | | \\__ \\ \\__/\\| |_____| |_ \n\\_| |_/_|   \\__\\___|_| |_| |_|_|___/\\____/\\_____/\\___/ \n\n  Submodule: ArtemisCLI/ServerUtils/Servertester.ts";
+var IPMultiPingAsciiLogo = "\n._____________     _____        .__   __  .__       .__                \n|   ______      /       __ __|  |_/  |_|__|_____ |__| ____    ____  \n|   ||     ___/  /   /  |  |    |   __  ____ |  |/      / ___ \n|   ||    |     /    Y      |  /  |_|  | |  |  |_> >  |   |  / /_/  >\n|___||____|     ____|__  /____/|____/__| |__|   __/|__|___|  /___  / \n                        /                   |__|           //_____/  ";
 var lineBreak = "-------------------------------";
 exports.lineBreak = lineBreak;
 /**
@@ -19,7 +18,7 @@ exports.lineBreak = lineBreak;
  * @description Prints 'ArtemisCLI' to Console using npm's boxes
  */
 function Header() {
-    console.log(boxen_1.default(ArtemisCLI_AsciiLogo_Custom, {
+    console.log(boxen_1.default(IPMultiPingAsciiLogo, {
         padding: 1,
         margin: 1,
         borderStyle: "round",
@@ -29,7 +28,6 @@ function Header() {
 exports.Header = Header;
 /**
  * @author Oliver Karger
- * @version 1.0c
  * @description Displays Custom Error Message to Console
  * @param msg The Error Message to be displayed
  */
@@ -39,7 +37,6 @@ function WriteError(msg) {
 exports.WriteError = WriteError;
 /**
  * @author Oliver Karger
- * @version 1.0c
  * @description Displays Custom Warning Message to Console
  * @param msg The Warning Message to be displayed
  */
@@ -49,7 +46,6 @@ function WriteWarning(msg) {
 exports.WriteWarning = WriteWarning;
 /**
  * @author Oliver Karger
- * @version 1.0b
  * @description Displays Custom Info Message to Console
  * @param msg The Informational Message to be displayed
  */
@@ -59,7 +55,6 @@ function WriteInfo(msg) {
 exports.WriteInfo = WriteInfo;
 /**
  * @author Oliver Karger
- * @version 1.0a
  * @description Displays Custom Success Message to Console
  * @param msg The Success Message to be displayed
  */
@@ -69,7 +64,6 @@ function WriteSuccess(msg) {
 exports.WriteSuccess = WriteSuccess;
 /**
  * @author Oliver Karger
- * @version 1.0a
  * @description Displays Custom Request Message to Console
  * @param msg The Request Message to be displayed
  */

@@ -4,23 +4,13 @@ import boxen from "boxen";
 import logSymbols from "log-symbols";
 
 // REUSED CONSTS
-const ArtemisCLI_AsciiLogo = `
-  ___       _                 _     _____  _     _____
- / _ \\     | |               (_)   /  __ \\| |   |_   _|
-/ /_\\ \\_ __| |_ ___ _ __ ___  _ ___| /  \\/| |     | |  
-|  _  | '__| __/ _ \\ '_ \` _ \\| / __| |    | |     | |  
-| | | | |  | ||  __/ | | | | | \\__ \\ \\__/\\| |_____| |_ 
-\\_| |_/_|   \\__\\___|_| |_| |_|_|___/\\____/\\_____/\\___/ `;
-
-const ArtemisCLI_AsciiLogo_Custom = `
-  ___       _                 _     _____  _     _____
- / _ \\     | |               (_)   /  __ \\| |   |_   _|
-/ /_\\ \\_ __| |_ ___ _ __ ___  _ ___| /  \\/| |     | |  
-|  _  | '__| __/ _ \\ '_ \` _ \\| / __| |    | |     | |  
-| | | | |  | ||  __/ | | | | | \\__ \\ \\__/\\| |_____| |_ 
-\\_| |_/_|   \\__\\___|_| |_| |_|_|___/\\____/\\_____/\\___/ 
-
-  Submodule: ArtemisCLI/ServerUtils/ip-multiping.ts`;
+const IPMultiPingAsciiLogo = `
+._____________     _____        .__   __  .__       .__                
+|   \\______   \\   /     \\  __ __|  |_/  |_|__|_____ |__| ____    ____  
+|   ||     ___/  /  \\ /  \\|  |  \\  |\\   __\\  \\____ \\|  |/    \\  / ___\\ 
+|   ||    |     /    Y    \\  |  /  |_|  | |  |  |_> >  |   |  \\/ /_/  >
+|___||____|     \\____|__  /____/|____/__| |__|   __/|__|___|  /\___  / 
+                        \\/                   |__|           \\//_____/  `;
 
 const lineBreak = "-------------------------------";
 
@@ -31,7 +21,7 @@ const lineBreak = "-------------------------------";
  */
 function Header() {
     console.log(
-        boxen(ArtemisCLI_AsciiLogo_Custom, {
+        boxen(IPMultiPingAsciiLogo, {
             padding: 1,
             margin: 1,
             borderStyle: "round",
@@ -42,7 +32,6 @@ function Header() {
 
 /**
  * @author Oliver Karger
- * @version 1.0c
  * @description Displays Custom Error Message to Console
  * @param msg The Error Message to be displayed
  */
@@ -52,7 +41,6 @@ function WriteError(msg: string) {
 
 /**
  * @author Oliver Karger
- * @version 1.0c
  * @description Displays Custom Warning Message to Console
  * @param msg The Warning Message to be displayed
  */
@@ -62,7 +50,6 @@ function WriteWarning(msg: string) {
 
 /**
  * @author Oliver Karger
- * @version 1.0b
  * @description Displays Custom Info Message to Console
  * @param msg The Informational Message to be displayed
  */
@@ -72,7 +59,6 @@ function WriteInfo(msg: string) {
 
 /**
  * @author Oliver Karger
- * @version 1.0a
  * @description Displays Custom Success Message to Console
  * @param msg The Success Message to be displayed
  */
@@ -82,7 +68,6 @@ function WriteSuccess(msg: string) {
 
 /**
  * @author Oliver Karger
- * @version 1.0a
  * @description Displays Custom Request Message to Console
  * @param msg The Request Message to be displayed
  */

@@ -6,7 +6,7 @@
   "bin": "src/ip-multiping.ts",
   "scripts": {
     "start": "babel-node src/ip-multiping.ts --extensions \".ts\"",
-    "pkg": "pkg --config package.json ./dist/ip-multiping.js",
+    "pkg": "pkg --config package.json ./pureJS/ip-multiping.js",
     "typescript": "tsc",
     "build": "npm run typescript && npm run pkg"
   },

@@ -35,12 +35,6 @@ const help = `
     }
 `;
 
-// setup marked-terminal-renderer
-marked.setOptions({
-    // Custom renderer
-    renderer: new MarkdownRenderer(),
-});
-
 /**
  * @author Oliver Karger
  * @description Contains Data returned from "GetIpAddresses()"
