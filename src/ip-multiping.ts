@@ -1,12 +1,9 @@
-var { Select, prompt } = require("enquirer");
-var validateIP = require("validate-ip-node");
-var ping = require("ping");
-var { exec } = require("child_process");
-var { WriteInfo, WriteWarning, WriteSuccess, WriteRequest, WriteError, Header } = require("./ArtemisCLI");
-var chalk = require("chalk");
-var fs = require("fs");
-var marked = require("marked");
-var MarkdownRenderer = require("marked-terminal");
+import { prompt, Select } from "enquirer"; // ! IntelliSense says that there is no member to export, but thats not true
+import validateIP from "validate-ip-node";
+import * as ping from "ping";
+import { exec } from "child_process";
+import { WriteInfo, WriteWarning, WriteSuccess, WriteRequest, WriteError, Header } from "./ArtemisCLI";
+import * as fs from "fs";
 
 const help = `
 --------
@@ -66,7 +63,7 @@ async function GetIpAddresses(): Promise<IpAddressList> {
         message: "Your way:",
         choices: ["CLI", "Params/Args", "File", "Help"],
     });
-    let InputPromptResult = await inputPrompt.run();
+    let InputPromptResult: string = await inputPrompt.run().catch((e) => WriteError(e));
     if (InputPromptResult === "File") {
         WriteInfo("Current Location: " + process.cwd());
         let filePath = await prompt({
@@ -115,7 +112,7 @@ async function main(): Promise<void> {
             if (await validateIP(IpAddress)) {
                 // IP Address is valid
                 WriteInfo(`IP-Address: ${IpAddress} is valid`);
-                let status = await ping.promise.probe(IpAddress);
+                let status = await ping.promise.probe(IpAddress).catch((e) => WriteError(e));
                 if (status.alive) {
                     WriteSuccess(`IP-Address: ${IpAddress} is alive!`);
                 } else {
