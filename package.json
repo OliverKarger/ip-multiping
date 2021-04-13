@@ -1,12 +1,12 @@
 {
-  "name": "@oliverkarger/multi-ip-tester",
+  "name": "@oliverkarger/ip-multiping",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/multi-ip-tester.ts",
-  "bin": "src/multi-ip-tester.ts",
+  "description": "Multi-IP Testing and Ping Tool",
+  "main": "src/ip-multiping.ts",
+  "bin": "src/ip-multiping.ts",
   "scripts": {
-    "start": "babel-node src/multi-ip-tester.ts --extensions \".ts\"",
-    "pkg": "pkg --config package.json ./dist/multi-ip-tester.js",
+    "start": "babel-node src/ip-multiping.ts --extensions \".ts\"",
+    "pkg": "pkg --config package.json ./dist/ip-multiping.js",
     "typescript": "tsc",
     "build": "npm run typescript && npm run pkg"
   },
@@ -23,10 +23,13 @@
     "figures": "^3.2.0",
     "linebyline": "^1.3.0",
     "log-symbols": "^4.1.0",
+    "marked": "^2.0.3",
+    "marked-terminal": "^4.1.1",
     "ping": "^0.4.1",
     "pkg": "^4.5.1",
     "typescript": "^4.2.4",
-    "validate-ip-node": "^1.0.6"
+    "validate-ip-node": "^1.0.6",
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.14",
@@ -39,8 +42,13 @@
     "@typescript-eslint/parser": "^4.21.0"
   },
   "pkg": {
-    "assets": ["dist/**/*"],
-    "targets": ["node12-macos-x64", "node12-win-x64"],
+    "assets": [
+      "dist/**/*"
+    ],
+    "targets": [
+      "node12-macos-x64",
+      "node12-win-x64"
+    ],
     "output": "./build"
   }
 }
