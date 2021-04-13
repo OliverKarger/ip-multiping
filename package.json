@@ -1,12 +1,12 @@
 {
-  "name": "@oliverkarger/multi-ip-tester",
+  "name": "@oliverkarger/ip-multiping",
   "version": "1.0.0",
   "description": "Multi-IP Testing and Ping Tool",
-  "main": "src/multi-ip-tester.ts",
-  "bin": "src/multi-ip-tester.ts",
+  "main": "src/ip-multiping.ts",
+  "bin": "src/ip-multiping.ts",
   "scripts": {
-    "start": "babel-node src/multi-ip-tester.ts --extensions \".ts\"",
-    "pkg": "pkg --config package.json ./dist/multi-ip-tester.js",
+    "start": "babel-node src/ip-multiping.ts --extensions \".ts\"",
+    "pkg": "pkg --config package.json ./dist/ip-multiping.js",
     "typescript": "tsc",
     "build": "npm run typescript && npm run pkg"
   },

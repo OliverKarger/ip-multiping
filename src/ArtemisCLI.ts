@@ -20,7 +20,7 @@ const ArtemisCLI_AsciiLogo_Custom = `
 | | | | |  | ||  __/ | | | | | \\__ \\ \\__/\\| |_____| |_ 
 \\_| |_/_|   \\__\\___|_| |_| |_|_|___/\\____/\\_____/\\___/ 
 
-  Submodule: ArtemisCLI/ServerUtils/Servertester.ts`;
+  Submodule: ArtemisCLI/ServerUtils/ip-multiping.ts`;
 
 const lineBreak = "-------------------------------";
 
