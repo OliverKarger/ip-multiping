@@ -1,0 +1,73 @@
+{
+  "env": {
+    "es2021": true
+  },
+  "extends": [
+    "google"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "comma-dangle": "off",
+    "object-curly-spacing": "off",
+    "object-shorthand": [
+      2,
+      "always"
+    ],
+    "array-bracket-spacing": [
+      2,
+      "never"
+    ],
+    "max-len": [
+      2,
+      120,
+      {
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreComments": true
+      }
+    ],
+    "consistent-return": 1,
+    "prefer-destructuring": [
+      2,
+      {
+        "array": false,
+        "object": false
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "prefer-object-spread": 0,
+    "prefer-rest-params": 0,
+    "prefer-spread": 0,
+    "function-paren-newline": 0,
+    "no-plusplus": 1,
+    "no-param-reassign": 1,
+    "no-restricted-syntax": "off",
+    "strict": [
+      2,
+      "safe"
+    ],
+    "valid-jsdoc": "off",
+    "require-jsdoc": "off",
+    "indent": "off",
+    "operator-linebreak": "off"
+  },
+  "overrides": [
+    {
+      "files": "tests/**",
+      "rules": {
+        "no-template-curly-in-string": 1
+      }
+    },
+    {
+      "files": "markdown.config.js",
+      "rules": {
+        "no-console": 0
+      }
+    }
+  ]
+}

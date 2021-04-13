@@ -1,1 +1,11 @@
 node_modules/
+*.json
+.prettierrc
+.prettierignore
+readme.md
+.gitignore
+pureJS/
+@oliverkarger/ 
+License
+.eslintrc
+.babelrc
