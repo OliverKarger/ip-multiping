@@ -43,7 +43,7 @@
   },
   "pkg": {
     "assets": [
-      "dist/**/*"
+      "pureJS/**/*"
     ],
     "targets": [
       "node12-macos-x64",
