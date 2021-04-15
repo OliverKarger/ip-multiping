@@ -42,6 +42,14 @@ type IpAddressList = {
 
 /**
  * @author Oliver Karger
+ * @description Contains Data Return from FilePathInputPrompt
+ */
+type filePathPromptResult = {
+    path: string;
+};
+
+/**
+ * @author Oliver Karger
  * @description AddressList by prompt(...); as String, needs to be .split(',') to convert to IpAddressList
  */
 type IpAddressListString = {
@@ -54,7 +62,6 @@ type IpAddressListString = {
  * @returns Object from Type: IpAddressList
  */
 async function getIpAddresses(): Promise<IpAddressList> {
-    'use strict';
     writeRequest('Please select your preferred Way to input Data');
     // Response Variable
     let response: IpAddressList = { AddressList: [] };
@@ -67,13 +74,13 @@ async function getIpAddresses(): Promise<IpAddressList> {
     const InputPromptResult: string = await inputPrompt.run().catch((e) => writeError(e));
     if (InputPromptResult === 'File') {
         writeInfo('Current Location: ' + process.cwd());
-        const filePath = await prompt({
+        const filePath: filePathPromptResult = await prompt({
             type: 'input',
             name: 'path',
             message: 'Please Enter Path to Host File (.json)',
         });
         try {
-            response = JSON.parse(fs.readFileSync(filePath.path));
+            response = JSON.parse(fs.readFileSync(filePath.path).toString());
         } catch (e) {
             writeError(e);
         }
@@ -105,7 +112,6 @@ header();
  * @description Main Method
  */
 async function main(): Promise<void> {
-    'use strict';
     // Get IP Addresses from User
     const IpAddressInput = await getIpAddresses();
     await Promise.all(
@@ -130,7 +136,6 @@ async function main(): Promise<void> {
 
 // * Call Main Method - has to be on the bottom of the code
 main().catch((e) => {
-    'use strict';
     writeError(e);
 });
 
