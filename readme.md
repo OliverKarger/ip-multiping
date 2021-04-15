@@ -1,4 +1,6 @@
 # IP-Multiping
+[![CodeFactor](https://www.codefactor.io/repository/github/oliverkarger/ip-multiping/badge)](https://www.codefactor.io/repository/github/oliverkarger/ip-multiping)
+
 Simple Tool to Ping multible IP-Addresses at once
 
 ## How it works
