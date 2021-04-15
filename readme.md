@@ -1,5 +1,5 @@
 # IP-Multiping
-[![CodeFactor](https://www.codefactor.io/repository/github/oliverkarger/ip-multiping/badge)](https://www.codefactor.io/repository/github/oliverkarger/ip-multiping)
+[![CodeFactor](https://img.shields.io/codefactor/grade/github/oliverkarger/ip-multiping?logo=codefactor&style=for-the-badge)](https://www.codefactor.io/repository/github/oliverkarger/ip-multiping)
 
 Simple Tool to Ping multible IP-Addresses at once
 
