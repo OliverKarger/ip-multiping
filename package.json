@@ -27,17 +27,17 @@
     "log-symbols": "^5.0.0",
     "ping": "^0.4.1",
     "validate-ip-node": "^1.0.6",
-    "yargs": "^16.2.0"
+    "yargs": "^17.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.14.0",
+    "@babel/cli": "^7.14.3",
+    "@babel/core": "^7.14.3",
     "@babel/node": "^7.13.13",
-    "@babel/preset-env": "^7.14.0",
+    "@babel/preset-env": "^7.14.2",
     "@babel/preset-typescript": "^7.13.0",
     "@types/node": "^15.3.1",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
-    "@typescript-eslint/parser": "^4.22.0",
+    "@typescript-eslint/parser": "^4.24.0",
     "eslint": "^7.25.0",
     "eslint-config-google": "^0.14.0",
     "pkg": "^5.1.0",
