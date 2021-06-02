@@ -1,4 +1,5 @@
-import {prompt, Select} from 'enquirer'; // ! IntelliSense says that there is no member to export, but thats not true
+// import {prompt, Select} from 'enquirer'; // ! IntelliSense says that there is no member to export, but thats not true
+const {prompt, Select} = require('enquirer');
 import validateIP from 'validate-ip-node';
 import * as ping from 'ping';
 import {exec} from 'child_process';
