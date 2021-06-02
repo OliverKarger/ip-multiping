@@ -34,7 +34,7 @@
     "@babel/cli": "^7.14.3",
     "@babel/core": "^7.14.3",
     "@babel/node": "^7.13.13",
-    "@babel/preset-env": "^7.14.2",
+    "@babel/preset-env": "^7.14.4",
     "@babel/preset-typescript": "^7.13.0",
     "@types/node": "^15.6.2",
     "@types/signale": "^1.4.1",
