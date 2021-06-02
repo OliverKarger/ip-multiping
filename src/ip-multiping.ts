@@ -1,9 +1,17 @@
-import { prompt, Select } from 'enquirer'; // ! IntelliSense says that there is no member to export, but thats not true
+import {prompt, Select} from 'enquirer'; // ! IntelliSense says that there is no member to export, but thats not true
 import validateIP from 'validate-ip-node';
 import * as ping from 'ping';
-import { exec } from 'child_process';
-import { writeInfo, writeWarning, writeSuccess, writeRequest, writeError, header } from './ArtemisCLI';
+import {exec} from 'child_process';
+import signale, {DefaultMethods, SignaleConfig} from 'signale';
 import * as fs from 'fs';
+
+const signaleConfiguration: SignaleConfig = {
+	displayBadge: true,
+	displayFilename: true,
+	displayTimestamp: true,
+};
+const logger: signale.Signale<DefaultMethods> = new signale.Signale();
+logger.config(signaleConfiguration);
 
 const help = `
 --------
@@ -37,7 +45,7 @@ const help = `
  * @description Contains Data returned from 'GetIpAddresses()'
  */
 type IpAddressList = {
-    AddressList: string[];
+	AddressList: string[];
 };
 
 /**
@@ -45,7 +53,7 @@ type IpAddressList = {
  * @description Contains Data Return from FilePathInputPrompt
  */
 type filePathPromptResult = {
-    path: string;
+	path: string;
 };
 
 /**
@@ -53,90 +61,91 @@ type filePathPromptResult = {
  * @description AddressList by prompt(...); as String, needs to be .split(',') to convert to IpAddressList
  */
 type IpAddressListString = {
-    AddressList: string;
+	AddressList: string;
 };
 
 /**
  * @author Oliver Karger
  * @description Get IP Addresses from User
- * @returns Object from Type: IpAddressList
+ * @return {Promise<IpAddressList>} Object from Type: IpAddressList
  */
 async function getIpAddresses(): Promise<IpAddressList> {
-    writeRequest('Please select your preferred Way to input Data');
-    // Response Variable
-    let response: IpAddressList = { AddressList: [] };
-    // Input Prompt
-    const inputPrompt = new Select({
-        name: 'Action',
-        message: 'Your way:',
-        choices: ['CLI', 'Params/Args', 'File', 'Help'],
-    });
-    const InputPromptResult: string = await inputPrompt.run().catch((e) => writeError(e));
-    if (InputPromptResult === 'File') {
-        writeInfo('Current Location: ' + process.cwd());
-        const filePath: filePathPromptResult = await prompt({
-            type: 'input',
-            name: 'path',
-            message: 'Please Enter Path to Host File (.json)',
-        });
-        try {
-            response = JSON.parse(fs.readFileSync(filePath.path).toString());
-        } catch (e) {
-            writeError(e);
-        }
-    } else if (InputPromptResult === 'Params/Args') {
-        // removes first 2 items (default nodejs args), formatts for correct format
-        response.AddressList = process.argv.slice(2)[0].split(',');
-    } else if (InputPromptResult === 'CLI') {
-        // ! Returns single string, has to be splitted
-        const cliPromptResult: IpAddressListString = await prompt({
-            type: 'input',
-            name: 'AddressList',
-            message: 'IP-Addresses',
-        });
-        // ! Split string for correct format
-        response.AddressList = cliPromptResult.AddressList.split(',');
-    } else if (InputPromptResult === 'Help') {
-        writeInfo('\n' + help);
-    } else {
-        writeError('Invalid Prompt Result!');
-    }
-    return response;
+	logger.await('Please select your preferred Way to input Data');
+	// Response Variable
+	let response: IpAddressList = {AddressList: []};
+	// Input Prompt
+	const inputPrompt = new Select({
+		name: 'Action',
+		message: 'Your way:',
+		choices: ['CLI', 'Params/Args', 'File', 'Help'],
+	});
+	const InputPromptResult: string = await inputPrompt
+		.run()
+		.catch((e) => logger.fatal(new Error(e)));
+	if (InputPromptResult === 'File') {
+		logger.info('Current Location: ' + process.cwd());
+		const filePath: filePathPromptResult = await prompt({
+			type: 'input',
+			name: 'path',
+			message: 'Please Enter Path to Host File (.json)',
+		});
+		try {
+			response = JSON.parse(fs.readFileSync(filePath.path).toString());
+		} catch (e) {
+			logger.fatal(new Error(e));
+		}
+	} else if (InputPromptResult === 'Params/Args') {
+		// removes first 2 items (default nodejs args), formatts for correct format
+		response.AddressList = process.argv.slice(2)[0].split(',');
+	} else if (InputPromptResult === 'CLI') {
+		// ! Returns single string, has to be splitted
+		const cliPromptResult: IpAddressListString = await prompt({
+			type: 'input',
+			name: 'AddressList',
+			message: 'IP-Addresses',
+		});
+		// ! Split string for correct format
+		response.AddressList = cliPromptResult.AddressList.split(',');
+	} else if (InputPromptResult === 'Help') {
+		logger.info('\n' + help);
+	} else {
+		logger.fatal(new Error('Invalid Prompt Result!'));
+	}
+	return response;
 }
-
-// Display ArtemisCLI header
-header();
 
 /**
  * @author Oliver Karger
  * @description Main Method
  */
 async function main(): Promise<void> {
-    // Get IP Addresses from User
-    const IpAddressInput = await getIpAddresses();
-    await Promise.all(
-        IpAddressInput.AddressList.map(async (IpAddress) => {
-            // Validate
-            if (await validateIP(IpAddress)) {
-                // IP Address is valid
-                writeInfo(`IP-Address: ${IpAddress} is valid`);
-                const status = await ping.promise.probe(IpAddress).catch((e) => writeError(e));
-                if (status.alive) {
-                    writeSuccess(`IP-Address: ${IpAddress} is alive!`);
-                } else {
-                    writeWarning(`IP-Address: ${IpAddress} is dead!`);
-                }
-            } else {
-                // IP Address is invalid
-                writeWarning(`IP-Address: ${IpAddress} is invalid!`);
-            }
-        })
-    );
+	// Get IP Addresses from User
+	const IpAddressInput = await getIpAddresses();
+	await Promise.all(
+		IpAddressInput.AddressList.map(async (IpAddress) => {
+			// Validate
+			if (await validateIP(IpAddress)) {
+				// IP Address is valid
+				logger.info(`IP-Address: ${IpAddress} is valid`);
+				const status = await ping.promise
+					.probe(IpAddress)
+					.catch((e) => logger.fatal(new Error(e)));
+				if (status.alive) {
+					logger.success(`IP-Address: ${IpAddress} is alive!`);
+				} else {
+					logger.warn(`IP-Address: ${IpAddress} is dead!`);
+				}
+			} else {
+				// IP Address is invalid
+				logger.warn(`IP-Address: ${IpAddress} is invalid!`);
+			}
+		}),
+	);
 }
 
 // * Call Main Method - has to be on the bottom of the code
 main().catch((e) => {
-    writeError(e);
+	logger.fatal(new Error(e));
 });
 
 // * Keep Console open

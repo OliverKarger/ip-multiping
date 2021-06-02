@@ -1,12 +1,10 @@
 {
-    "arrowParens": "always",
-    "useTabs": false,
-    "tabWidth": 4,
+    "endOfLine": "lf",
     "singleQuote": true,
-    "semi": true,
-    "printWidth": 120,
-    "parser": "babel-ts",
-    "jsxSingleQuote": false,
-    "jsxBracketSameLine": true
+    "bracketSpacing": false,
+    "useTabs": true,
+    "tabWidth": 4,
+    "printWidth": 80,
+    "trailingComma": "all"
 }
   
