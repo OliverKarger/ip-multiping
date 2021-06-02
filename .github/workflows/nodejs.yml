@@ -18,17 +18,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: npm run pkg
-      - uses: actions/upload-artifact@master
-        with:
-          name: ${GITHUB_REF##*/}
-          path: ./@oliverkarger/*
-  create-tag:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@master
-        with:
-          name: ${GITHUB_REF##*/}
-          path: ./@oliverkarger/*
+      - run: find . -mindepth 1 -not -regex "^\./\.git.*|@oliverkarger" -print0 | xargs -0 -I {} rm -rf {}
       - uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
