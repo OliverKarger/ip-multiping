@@ -1,5 +1,4 @@
 import lib, { IpAddressList } from '../src/lib'
-
 import { expect } from 'chai'
 
 describe('Ping Tests', function()
@@ -11,7 +10,7 @@ describe('Ping Tests', function()
         const results = await libx.StartLib(ipAddresses)
 
         expect(results['8.8.8.8']).equals(true)
-    })
+    }).timeout(10000)
 
     it('Multiple IPs should be alive', async function()
     {
@@ -21,7 +20,7 @@ describe('Ping Tests', function()
 
         expect(results['8.8.8.8']).equals(true)
         expect(results['8.8.4.4']).equals(true)
-    })
+    }).timeout(10000)
 
     it('Single IP should be dead', async function()
     {
@@ -30,7 +29,7 @@ describe('Ping Tests', function()
         const results = await libx.StartLib(ipAddresses)
 
         expect(results['192.0.2.0']).equals(false)
-    }).timeout(5000)
+    }).timeout(10000)
 
     it('Multiple IPs should be dead', async function()
     {

@@ -1,5 +1,4 @@
 import lib from '../src/lib'
-
 import { expect } from 'chai'
 
 describe('Data Validation', function()

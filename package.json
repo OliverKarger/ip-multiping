@@ -11,7 +11,9 @@
     "build": "npm run typescript && npm run pkg",
     "eslint": "eslint src/**/*",
     "prettier": "prettier --write .",
-    "test": "nyc mocha -r ts-node/register tests/**/*.test.ts"
+    "test": "mocha -r ts-node/register tests/**/*.test.ts",
+    "coverage-text": "nyc --check-coverage --lines 80 --reporter=text mocha -r ts-node/register tests/**/*.test.ts",
+    "coverage-html": "nyc --check-coverage --lines 80 --reporter=html --reporter=text mocha -r ts-node/register tests/**/*.test.ts"
   },
   "keywords": [],
   "author": {

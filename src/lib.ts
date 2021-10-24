@@ -19,7 +19,7 @@ export type IpAddressList = { AddressList: string[] }
 export default class IpMultipingLib 
 {
 
-    private help = `
+    public help = `
 --------
 - HELP -
 --------
@@ -46,28 +46,23 @@ export default class IpMultipingLib
     }
 `
 
-    private log: signale.Signale<DefaultMethods> = new signale.Signale()
+    public log: signale.Signale<DefaultMethods> = new signale.Signale()
 
     /**
      * @OliverKarger
      * @description Gets IP Addresses from a File
      * @version 1.0
+     * @param {string} path Filepath
      * @created 14:25 24.10.2021
      * @lastChanged 14:27 24.10.2021
      * @type Function
      * @copyright 2021 (C) Oliver Karger / Infernitas SE
      */
-    public async GetIPAddressesFromFile(): Promise<IpAddressList>
+    public async GetIPAddressesFromFile(path?: string): Promise<IpAddressList>
     {
-        this.log.info('Current Location: ' + process.cwd())
-        const filePath = await prompt({
-            type: 'input',
-            name: 'path',
-            message: 'Please Enter Path to Host File (.json)',
-        })
         try 
         {
-            return JSON.parse(fs.readFileSync(filePath.path).toString())
+            return JSON.parse(fs.readFileSync(path).toString())
         } 
         catch (e) {
             this.log.warn(e)
@@ -88,70 +83,6 @@ export default class IpMultipingLib
         return { AddressList: process.argv.slice(2)[0].split(',') }
     }
 
-    /**
-     * @OliverKarger
-     * @description Gets IP Addresses from a Process Args
-     * @version 1.0
-     * @created 14:21 24.10.2021
-     * @lastChanged 23:25 24.10.2021
-     * @type Function
-     * @copyright 2021 (C) Oliver Karger / Infernitas SE
-     */
-    public async GetIpAdressesFromCLI(): Promise<IpAddressList>
-    {
-        const cliPromptResult = await prompt({
-            type: 'input',
-            name: 'AddressList',
-            message: 'IP-Addresses',
-        })
-        // Split string for correct format
-        return { AddressList: cliPromptResult.AddressList.split(',') }
-    }
-
-    /**
-     * @OliverKarger
-     * @description Gets IP Addresses from User / File
-     * @version 1.0
-     * @created 14:19 24.10.2021
-     * @lastChanged 23:26 24.10.2021
-     * @type Function
-     * @copyright 2021 (C) Oliver Karger / Infernitas SE
-     */
-    public async GetIpAddresses()
-    {
-        this.log.await('Please Select your preferred way to input data...')
-        // Result
-        let ipAddressList: IpAddressList = { AddressList: [] }
-        // Menu Prompt
-        const inputPrompt = new Select({
-            name: 'Action',
-            message: 'Your Choice',
-            choices: [ 'CLI', 'Params', 'File', 'Help' ]
-        })
-        const inputPromptResult = await inputPrompt.run().catch(e => this.log.warn(e))
-        if(inputPromptResult === 'CLI')
-        {
-            ipAddressList = await this.GetIpAdressesFromCLI()
-        }
-        else if (inputPromptResult === 'Params')
-        {
-            ipAddressList = this.GetIpAddressesFromArgs()
-        }
-        else if (inputPromptResult === 'File')
-        {
-            ipAddressList = await this.GetIPAddressesFromFile()
-        } 
-        else if (inputPromptResult === 'Help')
-        {
-            this.log.info('\n' + this.help)
-        }
-        else 
-        {
-            this.log.warn('Invalid Prompt Result!')
-        }
-        return ipAddressList
-    }
- 
     /**
      * @OliverKarger
      * @description Validate IP and catch Error
@@ -182,39 +113,6 @@ export default class IpMultipingLib
             this.log.warn(`IPAddress: ${ipAddress} could not be validated!`)
             return false
         }
-    }
-
-    /**
-     * @OliverKarger
-     * @description Main Method
-     * @version 1.0
-     * @param {IpAddressList} libAddressList Address List if App is executed from a extern Source
-     * @created 14:32 24.10.2021
-     * @lastChanged 23:27 24.10.2021
-     * @type Function
-     * @copyright 2021 (C) Oliver Karger / Infernitas SE
-     */
-    public async StartUI()
-    {
-        const addresses = await this.GetIpAddresses()
-        await Promise.all( /* For some reason, AddressList.ForEach cannot be used here. */
-            addresses.AddressList.map(async (ipAddress) => 
-            {
-                if(this.ValidateIp)
-                {
-                    this.log.info(`IPAddress: ${ipAddress} is valid!`)
-                    const status = await ping.promise.probe(ipAddress).catch(e => this.log.warn(e))
-                    if(status.alive)
-                    {
-                        this.log.success(`IPAddress: ${ipAddress} is alive!`)
-                    }
-                    else 
-                    {
-                        this.log.warn(`IPAddress: ${ipAddress} is dead!`)
-                    }
-                }  
-            })
-        )
     }
 
     /**

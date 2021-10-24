@@ -3,3 +3,5 @@ node_modules/
 dist/
 pureJS/
 .gitignore
+coverage/
+.nyc_output/
