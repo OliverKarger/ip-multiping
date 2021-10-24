@@ -4,7 +4,6 @@ import * as ping from 'ping'
 import { exec } from 'child_process'
 import signale, { DefaultMethods, SignaleConfig } from 'signale'
 import * as fs from 'fs'
-import { main } from 'figures'
 
 /* 
  * Signale Logger
@@ -85,18 +84,38 @@ async function GetIPAddressesFromFile()
         name: 'path',
         message: 'Please Enter Path to Host File (.json)',
     })
-    try {
+    try 
+    {
         return JSON.parse(fs.readFileSync(filePath.path).toString())
-    } catch (e) {
+    } 
+    catch (e) {
         log.fatal(new Error(e))
     }
 }
 
+/**
+ * @OliverKarger
+ * @description Gets IP Addresses from a Process Args
+ * @version 1.0
+ * @created 23:25 24.10.2021
+ * @lastChanged 23:25 24.10.2021
+ * @type Function
+ * @copyright 2021 (C) Oliver Karger / Infernitas SE
+ */
 function GetIpAddressesFromArgs()
 {
     return { AdressList: process.argv.slice(2)[0].split(',') }
 }
 
+/**
+ * @OliverKarger
+ * @description Gets IP Addresses from a Process Args
+ * @version 1.0
+ * @created 14:21 24.10.2021
+ * @lastChanged 23:25 24.10.2021
+ * @type Function
+ * @copyright 2021 (C) Oliver Karger / Infernitas SE
+ */
 async function GetIpAdressesFromCLI()
 {
     const cliPromptResult = await prompt({
@@ -105,7 +124,7 @@ async function GetIpAdressesFromCLI()
         message: 'IP-Addresses',
     })
     // Split string for correct format
-    return cliPromptResult.AddressList.split(',')
+    return { AdressList: cliPromptResult.AddressList.split(',') }
 
 }
 
@@ -114,7 +133,7 @@ async function GetIpAdressesFromCLI()
  * @description Gets IP Addresses from User / File
  * @version 1.0
  * @created 14:19 24.10.2021
- * @lastChanged 14:19 24.10.2021
+ * @lastChanged 23:26 24.10.2021
  * @type Function
  * @copyright 2021 (C) Oliver Karger / Infernitas SE
  */
@@ -150,11 +169,37 @@ async function GetIpAddresses()
     {
 		log.fatal(new Error('Invalid Prompt Result!'))
     }
+    return ipAddressList
 }
 
+/**
+ * @OliverKarger
+ * @description Validate IP and catch Error
+ * @version 1.0
+ * @created 14:19 24.10.2021
+ * @lastChanged 23:26 24.10.2021
+ * @type Function
+ * @copyright 2021 (C) Oliver Karger / Infernitas SE
+ */
 async function ValidateIp(ipAddress)
 {
-    return await validateIP(ipAddress)
+    try 
+    {
+        var isValid = await validateIP(ipAddress)
+        if(isValid)
+        {
+            return true
+        }
+        else 
+        {
+            log.fatal("Invalid IPAddress Format!")
+            return false
+        }
+    }
+    catch (e)
+    {
+        log.fatal(`IPAddress: ${ipAddress} could not be validated!`)
+    }
 }
 
 /**
@@ -162,13 +207,31 @@ async function ValidateIp(ipAddress)
  * @description Main Method
  * @version 1.0
  * @created 14:32 24.10.2021
- * @lastChanged 14:32 24.10.2021
+ * @lastChanged 23:27 24.10.2021
  * @type Function
  * @copyright 2021 (C) Oliver Karger / Infernitas SE
  */
 async function Main()
 {
     const addresses = await GetIpAddresses()
+    await Promise.all( /* For some reason, AdressList.ForEach cannot be used here. */
+        addresses.AdressList.map(async (ipAddress) => 
+        {
+            if(ValidateIp)
+            {
+                log.info(`IPAddress: ${ipAddress} is valid!`)
+                const status = await ping.promise.probe(ipAddress).catch(e => log.fatal(new Error(e)))
+                if(status.alive)
+                {
+                    log.success(`IPAddress: ${ipAddress} is alive!`)
+                }
+                else 
+                {
+                    log.warn(`IPAddress: ${ipAddress} is dead!`)
+                }
+            }  
+        })
+    )
 }
 
 try 
