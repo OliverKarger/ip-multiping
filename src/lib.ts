@@ -13,7 +13,7 @@ import signale, { DefaultMethods } from 'signale'
  * @type Type
  * @copyright 2021 (C) Oliver Karger / Infernitas SE
  */
-export type IpAddressList = { AdressList: string[] }
+export type IpAddressList = { AddressList: string[] }
 
 
 export default class IpMultipingLib 
@@ -57,7 +57,7 @@ export default class IpMultipingLib
      * @type Function
      * @copyright 2021 (C) Oliver Karger / Infernitas SE
      */
-    public async GetIPAddressesFromFile()
+    public async GetIPAddressesFromFile(): Promise<IpAddressList>
     {
         this.log.info('Current Location: ' + process.cwd())
         const filePath = await prompt({
@@ -70,7 +70,7 @@ export default class IpMultipingLib
             return JSON.parse(fs.readFileSync(filePath.path).toString())
         } 
         catch (e) {
-            this.log.fatal(new Error(e))
+            this.log.warn(e)
         }
     }
 
@@ -83,9 +83,9 @@ export default class IpMultipingLib
      * @type Function
      * @copyright 2021 (C) Oliver Karger / Infernitas SE
      */
-    public GetIpAddressesFromArgs()
+    public GetIpAddressesFromArgs(): IpAddressList
     {
-        return { AdressList: process.argv.slice(2)[0].split(',') }
+        return { AddressList: process.argv.slice(2)[0].split(',') }
     }
 
     /**
@@ -97,7 +97,7 @@ export default class IpMultipingLib
      * @type Function
      * @copyright 2021 (C) Oliver Karger / Infernitas SE
      */
-    public async GetIpAdressesFromCLI()
+    public async GetIpAdressesFromCLI(): Promise<IpAddressList>
     {
         const cliPromptResult = await prompt({
             type: 'input',
@@ -105,7 +105,7 @@ export default class IpMultipingLib
             message: 'IP-Addresses',
         })
         // Split string for correct format
-        return { AdressList: cliPromptResult.AddressList.split(',') }
+        return { AddressList: cliPromptResult.AddressList.split(',') }
     }
 
     /**
@@ -121,14 +121,14 @@ export default class IpMultipingLib
     {
         this.log.await('Please Select your preferred way to input data...')
         // Result
-        let ipAddressList: IpAddressList = { AdressList: [] }
+        let ipAddressList: IpAddressList = { AddressList: [] }
         // Menu Prompt
         const inputPrompt = new Select({
             name: 'Action',
             message: 'Your Choice',
             choices: [ 'CLI', 'Params', 'File', 'Help' ]
         })
-        const inputPromptResult = await inputPrompt.run().catch(e => this.log.fatal(new Error(e)))
+        const inputPromptResult = await inputPrompt.run().catch(e => this.log.warn(e))
         if(inputPromptResult === 'CLI')
         {
             ipAddressList = await this.GetIpAdressesFromCLI()
@@ -147,7 +147,7 @@ export default class IpMultipingLib
         }
         else 
         {
-            this.log.fatal(new Error('Invalid Prompt Result!'))
+            this.log.warn('Invalid Prompt Result!')
         }
         return ipAddressList
     }
@@ -156,29 +156,31 @@ export default class IpMultipingLib
      * @OliverKarger
      * @description Validate IP and catch Error
      * @version 1.0
+     * @param {string} ipAddress IP Address String to be validated
      * @created 14:19 24.10.2021
      * @lastChanged 23:26 24.10.2021
      * @type Function
      * @copyright 2021 (C) Oliver Karger / Infernitas SE
      */
-    public async ValidateIp(ipAddress)
+    public ValidateIp(ipAddress): boolean
     {
         try 
         {
-            var isValid = await validateIP(ipAddress)
+            var isValid = validateIP(ipAddress)
             if(isValid)
             {
                 return true
             }
             else 
             {
-                this.log.fatal("Invalid IPAddress Format!")
+                this.log.warn('Invalid IPAddress Format!')
                 return false
             }
         }
         catch (e)
         {
-            this.log.fatal(`IPAddress: ${ipAddress} could not be validated!`)
+            this.log.warn(`IPAddress: ${ipAddress} could not be validated!`)
+            return false
         }
     }
 
@@ -186,21 +188,22 @@ export default class IpMultipingLib
      * @OliverKarger
      * @description Main Method
      * @version 1.0
+     * @param {IpAddressList} libAddressList Address List if App is executed from a extern Source
      * @created 14:32 24.10.2021
      * @lastChanged 23:27 24.10.2021
      * @type Function
      * @copyright 2021 (C) Oliver Karger / Infernitas SE
      */
-    public async Start()
+    public async StartUI()
     {
         const addresses = await this.GetIpAddresses()
-        await Promise.all( /* For some reason, AdressList.ForEach cannot be used here. */
-            addresses.AdressList.map(async (ipAddress) => 
+        await Promise.all( /* For some reason, AddressList.ForEach cannot be used here. */
+            addresses.AddressList.map(async (ipAddress) => 
             {
                 if(this.ValidateIp)
                 {
                     this.log.info(`IPAddress: ${ipAddress} is valid!`)
-                    const status = await ping.promise.probe(ipAddress).catch(e => this.log.fatal(new Error(e)))
+                    const status = await ping.promise.probe(ipAddress).catch(e => this.log.warn(e))
                     if(status.alive)
                     {
                         this.log.success(`IPAddress: ${ipAddress} is alive!`)
@@ -216,6 +219,39 @@ export default class IpMultipingLib
 
     /**
      * @OliverKarger
+     * @description Main Method
+     * @version 1.0
+     * @param {IpAddressList} libAddressList Address List if App is executed from a extern Source
+     * @created 14:32 24.10.2021
+     * @lastChanged 00:05 25.10.2021
+     * @type Function
+     * @copyright 2021 (C) Oliver Karger / Infernitas SE
+     */
+    public async StartLib(ipAddressList: IpAddressList)
+    {
+        var resultDic: { [id: string] : boolean; } = {};
+        await Promise.all( /* For some reason, AddressList.ForEach cannot be used here. */
+            ipAddressList.AddressList.map(async (ipAddress) => 
+            {
+                if(this.ValidateIp)
+                {
+                    const status = await ping.promise.probe(ipAddress).catch(e => this.log.warn(e))
+                    if(status.alive)
+                    {
+                        resultDic[ipAddress] = true
+                    }
+                    else 
+                    {
+                        resultDic[ipAddress] = false
+                    }
+                }  
+            })
+        )
+        return resultDic
+    }
+
+    /**
+     * @OliverKarger
      * @description Class Constructior
      * @version 1.0
      * @created 23:36 24.10.2021
@@ -223,13 +259,16 @@ export default class IpMultipingLib
      * @type Constructor
      * @copyright 2021 (C) Oliver Karger / Infernitas SE
      */
-    public constructor()
+    public constructor(isTesting?: boolean)
     {
         this.log.config({
             displayBadge: true,
             displayFilename: true, 
             displayTimestamp: true
         })
-        
+        if(isTesting)
+        {
+            this.log.disable()
+        }
     }
 }
