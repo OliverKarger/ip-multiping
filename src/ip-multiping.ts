@@ -1,9 +1,9 @@
 // import {prompt, Select} from 'enquirer'; // ! IntelliSense says that there is no member to export, but thats not true
-const {prompt, Select} = require('enquirer');
+const { prompt, Select } = require('enquirer');
 import validateIP from 'validate-ip-node';
 import * as ping from 'ping';
-import {exec} from 'child_process';
-import signale, {DefaultMethods, SignaleConfig} from 'signale';
+import { exec } from 'child_process';
+import signale, { DefaultMethods, SignaleConfig } from 'signale';
 import * as fs from 'fs';
 
 const signaleConfiguration: SignaleConfig = {
@@ -73,7 +73,7 @@ type IpAddressListString = {
 async function getIpAddresses(): Promise<IpAddressList> {
 	logger.await('Please select your preferred Way to input Data');
 	// Response Variable
-	let response: IpAddressList = {AddressList: []};
+	let response: IpAddressList = { AddressList: [] };
 	// Input Prompt
 	const inputPrompt = new Select({
 		name: 'Action',
