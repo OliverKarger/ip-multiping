@@ -4,4 +4,4 @@ dist/
 pureJS/
 .gitignore
 coverage/
-.nyc_output/
+.nyc_output
