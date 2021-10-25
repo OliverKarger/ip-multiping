@@ -1,3 +1,4 @@
+import { exec } from "child_process"
 import IpMultipingLib, { IpAddressList } from "./lib"
 const { prompt, Select } = require('enquirer')
 
@@ -10,7 +11,7 @@ async function main()
     // Menu Prompt
     const inputPrompt = new Select({
         name: 'Action',
-        message: 'Your Choice',
+        message: 'How to you want to Input the IP Addresses ?',
         choices: [ 'CLI', 'Args', 'File', 'Help' ]
     })
     const inputPromptResult = await inputPrompt.run().catch(e => log.warn(e))
@@ -39,4 +40,10 @@ async function main()
     {
         log.warn('Invalid Prompt Result!')
     }
+    ipAddressList.AddressList.forEach(ip => lib.ValidateIp(ip))
+    lib.StartLib(ipAddressList)
 }
+
+main()
+
+exec('pause')

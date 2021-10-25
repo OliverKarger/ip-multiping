@@ -1,5 +1,8 @@
 import lib, { IpAddressList } from '../src/lib'
-import { expect } from 'chai'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 describe('Ping Tests', function()
 {
@@ -15,7 +18,7 @@ describe('Ping Tests', function()
     it('Multiple IPs should be alive', async function()
     {
         const ipAddresses: IpAddressList = { AddressList: ['8.8.8.8', '8.8.4.4'] }
-        const libx = new lib()
+        const libx = new lib(true)
         const results = await libx.StartLib(ipAddresses)
 
         expect(results['8.8.8.8']).equals(true)
@@ -25,7 +28,7 @@ describe('Ping Tests', function()
     it('Single IP should be dead', async function()
     {
         const ipAddresses: IpAddressList = { AddressList: ['192.0.2.0'] }
-        const libx = new lib()
+        const libx = new lib(true)
         const results = await libx.StartLib(ipAddresses)
 
         expect(results['192.0.2.0']).equals(false)
@@ -34,7 +37,7 @@ describe('Ping Tests', function()
     it('Multiple IPs should be dead', async function()
     {
         const ipAddresses: IpAddressList = { AddressList: ['192.0.2.0', '198.51.100.0', '203.0.113.0'] }
-        const libx = new lib()
+        const libx = new lib(true)
         const results = await libx.StartLib(ipAddresses)
 
         expect(results['192.0.2.0']).equals(false)
@@ -45,7 +48,7 @@ describe('Ping Tests', function()
     it('Mixing dead and alive IP Addresses', async function()
     {
         const ipAddresses: IpAddressList = { AddressList: ['8.8.8.8', '8.8.4.4', '192.0.2.0'] }
-        const libx = new lib()
+        const libx = new lib(true)
         const results = await libx.StartLib(ipAddresses)
 
         expect(results['8.8.8.8']).equals(true)

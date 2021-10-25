@@ -1,4 +1,0 @@
-{
-    "repoter": ["text", "html"],
-    "include": ["./src/**/*"]
-}

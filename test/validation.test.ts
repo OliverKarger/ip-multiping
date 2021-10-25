@@ -1,5 +1,8 @@
 import lib from '../src/lib'
-import { expect } from 'chai'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised)
+const expect = chai.expect
 
 describe('Data Validation', function()
 {
@@ -17,5 +20,12 @@ describe('Data Validation', function()
         const libx = new lib(true)
         const result = libx.ValidateIp(validIp)
         expect(result).equals(true)
+    })
+
+    it('IP Validation should throw error', function()
+    {
+        const ip = ''
+        const libx = new lib(true)
+        expect(libx.ValidateIp(ip)).equals(false)
     })
 })
