@@ -1,5 +1,5 @@
 # IP-Multiping
-[![CodeFactor](https://img.shields.io/codefactor/grade/github/oliverkarger/ip-multiping?logo=codefactor&style=for-the-badge)](https://www.codefactor.io/repository/github/oliverkarger/ip-multiping)
+[![Coverage Status](https://coveralls.io/repos/github/OliverKarger/ip-multiping/badge.svg)](https://coveralls.io/github/OliverKarger/ip-multiping)
 
 Simple Tool to Ping multible IP-Addresses at once
 
@@ -18,7 +18,7 @@ Simple Tool to Ping multible IP-Addresses at once
 1. Start it
 2. You got three Options (+Help)
 	- CLI: Enter IP Addresses using the CLI, seperated by commas: `10.0.0.1,10.0.0.2,10.0.0.2`
-	- Params/Args: Use Args provided when starting the Executable: `./ip-multiping 10.0.0.1,10.0.0.2`
+	- Params/Args: Use Args provided when starting the Executable: `./ip-multiping --hosts 10.0.0.1,10.0.0.2`
 	- File: Input using a JSON Config File (Tutorial for that below)
 3. First, IP Addresses will get validated for correct format and then pinged. See Results!
 
