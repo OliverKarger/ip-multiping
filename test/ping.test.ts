@@ -8,21 +8,11 @@ describe('Ping Tests', function()
 {
     it('Single IP should be alive', async function()
     {
-        const ipAddresses: IpAddressList = { AddressList: ['8.8.8.8'] }
+        const ipAddresses: IpAddressList = { AddressList: ['127.0.0.1'] }
         const libx = new lib()
         const results = await libx.StartLib(ipAddresses)
 
-        expect(results['8.8.8.8']).equals(true)
-    }).timeout(10000)
-
-    it('Multiple IPs should be alive', async function()
-    {
-        const ipAddresses: IpAddressList = { AddressList: ['8.8.8.8', '8.8.4.4'] }
-        const libx = new lib(true)
-        const results = await libx.StartLib(ipAddresses)
-
-        expect(results['8.8.8.8']).equals(true)
-        expect(results['8.8.4.4']).equals(true)
+        expect(results['127.0.0.1']).equals(true)
     }).timeout(10000)
 
     it('Single IP should be dead', async function()
@@ -47,12 +37,11 @@ describe('Ping Tests', function()
 
     it('Mixing dead and alive IP Addresses', async function()
     {
-        const ipAddresses: IpAddressList = { AddressList: ['8.8.8.8', '8.8.4.4', '192.0.2.0'] }
+        const ipAddresses: IpAddressList = { AddressList: ['127.0.0.1', '192.0.2.0'] }
         const libx = new lib(true)
         const results = await libx.StartLib(ipAddresses)
 
-        expect(results['8.8.8.8']).equals(true)
-        expect(results['8.8.4.4']).equals(true)
+        expect(results['127.0.0.1']).equals(true)
         expect(results['192.0.2.0']).equals(false)
     }).timeout(10000)
 })
