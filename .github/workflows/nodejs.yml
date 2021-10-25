@@ -18,18 +18,3 @@ jobs:
         uses: actions/setup-node@v1
       - run: npm install
       - run: npm run coverage
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions@checkout@v1
-      - name: 'Setup Node Environment'
-        uses: actions/setup-node@v1
-      - run: npm install
-      - run: npm run coverage
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_GIT_BRANCH: ${{ github.ref }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
