@@ -19,6 +19,8 @@ jobs:
       - run: npm install
       - run: npm run test
   coverage:
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v1
       - name: 'Setup Node Environment'
         uses: actions/setup-node@v1
